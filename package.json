@@ -11,6 +11,10 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DarkoKuzmanovic/vscode-cowsay"
+  },
   "activationEvents": [
   ],
   "main": "./extension.js",
