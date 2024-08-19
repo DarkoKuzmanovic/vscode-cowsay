@@ -1,0 +1,96 @@
+{
+  "name": "vscode-cowsay",
+  "displayName": "VS Code Cowsay",
+  "description": "A fun Cowsay sidebar for VS Code with zoom functionality",
+	"icon": "resources/icon.png",
+  "version": "0.2.0",
+  "publisher": "quzma",
+  "engines": {
+    "vscode": "^1.92.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "cowsayView",
+          "name": "VS Code Cowsay",
+          "icon": "resources/cow.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vscode-cowsay.refresh",
+        "title": "Refresh Cowsay",
+        "category": "Cowsay",
+        "icon": {
+          "light": "resources/refresh-light.svg",
+          "dark": "resources/refresh-dark.svg"
+        }
+      },
+      {
+        "command": "vscode-cowsay.zoomIn",
+        "title": "Zoom In Cowsay",
+        "category": "Cowsay",
+        "icon": {
+          "light": "resources/zoom-in-light.svg",
+          "dark": "resources/zoom-in-dark.svg"
+        }
+      },
+      {
+        "command": "vscode-cowsay.zoomOut",
+        "title": "Zoom Out Cowsay",
+        "category": "Cowsay",
+        "icon": {
+          "light": "resources/zoom-out-light.svg",
+          "dark": "resources/zoom-out-dark.svg"
+        }
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vscode-cowsay.refresh",
+          "when": "view == cowsayView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "vscode-cowsay.zoomIn",
+          "when": "view == cowsayView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vscode-cowsay.zoomOut",
+          "when": "view == cowsayView",
+          "group": "navigation@3"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.92.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "eslint": "^8.57.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.3.0",
+    "typescript": "^5.4.5",
+    "@vscode/test-electron": "^2.3.9"
+  },
+  "dependencies": {
+    "cowsay": "^1.6.0"
+  }
+}
