@@ -2,8 +2,8 @@
   "name": "vscode-cowsay",
   "displayName": "VS Code Cowsay",
   "description": "A fun Cowsay sidebar for VS Code with zoom functionality",
-	"icon": "resources/icon.png",
-  "version": "0.2.0",
+  "icon": "resources/icon.png",
+  "version": "0.3.0",
   "publisher": "quzma",
   "engines": {
     "vscode": "^1.92.0"
@@ -15,8 +15,7 @@
     "type": "git",
     "url": "https://github.com/DarkoKuzmanovic/vscode-cowsay"
   },
-  "activationEvents": [
-  ],
+  "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
     "views": {
@@ -56,6 +55,15 @@
           "light": "resources/zoom-out-light.svg",
           "dark": "resources/zoom-out-dark.svg"
         }
+      },
+      {
+        "command": "vscode-cowsay.changeAnimal",
+        "title": "Change Animal",
+        "category": "Cowsay",
+        "icon": {
+          "light": "resources/zoom-out-light.svg",
+          "dark": "resources/zoom-out-dark.svg"
+        }
       }
     ],
     "menus": {
@@ -74,6 +82,11 @@
           "command": "vscode-cowsay.zoomOut",
           "when": "view == cowsayView",
           "group": "navigation@3"
+        },
+        {
+          "command": "vscode-cowsay.changeAnimal",
+          "when": "view == cowsayView",
+          "group": "navigation"
         }
       ]
     }
@@ -84,17 +97,18 @@
     "test": "node ./test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.92.0",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/vscode": "^1.92.0",
+    "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.57.0",
     "glob": "^10.3.10",
     "mocha": "^10.3.0",
-    "typescript": "^5.4.5",
-    "@vscode/test-electron": "^2.3.9"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "cowsay": "^1.6.0"
+    "cowsay": "^1.6.0",
+    "node-fetch": "^3.3.2"
   }
 }

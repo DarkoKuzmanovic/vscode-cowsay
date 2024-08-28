@@ -51,6 +51,11 @@ No known issues at this time. If you encounter any problems, please file an issu
 
 ## Release Notes
 
+### 0.3.0
+
+- Added more "animals" and ability to change them
+- Improved design and code compatibility
+
 ### 0.2.0
 
 - Added zoom functionality
@@ -68,4 +73,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This extension is licensed under the [MIT License](LICENSE).
-

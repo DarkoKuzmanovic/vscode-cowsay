@@ -27,18 +27,28 @@ function activate(context) {
             provider.zoomOut();
         })
     );
+
+    context.subscriptions.push(
+    vscode.commands.registerCommand('vscode-cowsay.changeAnimal', () => {
+        provider.showAnimalDropdown();
+    })
+);
 }
 
 class CowsayViewProvider {
+
     static viewType = 'cowsayView';
 
     constructor(extensionUri) {
         this._extensionUri = extensionUri;
         this._zoomLevel = 0.8;
         this._currentMessage = this._getRandomMessage();
+        this._currentAnimalIndex = 0;
+        this._animals = ['sheep', 'tux', 'default', 'koala', 'bunny', 'small'];
     }
 
-    resolveWebviewView(webviewView, context, _token) {
+    resolveWebviewView(webviewView) {
+
         this._view = webviewView;
 
         webviewView.webview.options = {
@@ -64,10 +74,26 @@ class CowsayViewProvider {
         this._update();
     }
 
+    changeAnimal() {
+        this._currentAnimalIndex = (this._currentAnimalIndex + 1) % this._animals.length;
+        this._update();
+    }
+
+    showAnimalDropdown() {
+        vscode.window.showQuickPick(this._animals).then(selectedAnimal => {
+            if (selectedAnimal) {
+                this._currentAnimalIndex = this._animals.indexOf(selectedAnimal);
+                this._update();
+            }
+        });
+    }
+
     _update() {
         if (this._view) {
+            const currentAnimal = this._animals[this._currentAnimalIndex];
             const message = cowsay.say({
                 text: this._currentMessage,
+                f: currentAnimal,
                 e: "oO",
                 T: "U "
             });
@@ -76,10 +102,9 @@ class CowsayViewProvider {
     }
 
     _getHtmlForWebview(message) {
-        
         var config = vscode.workspace.getConfiguration('editor');
         var fontFamily = config.get('fontFamily');
- 
+
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -88,12 +113,20 @@ class CowsayViewProvider {
             <title>VS Code Cowsay</title>
             <style>
                 body {
-                    white-space: pre;
                     font-size: ${14 * this._zoomLevel}px;
-                    line-height: 1.1;
+                    line-height: 1.0;
+                    overflow: hidden;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
                 }
                 pre {
                     font-family: ${fontFamily}, monospace;
+                }
+                ::-webkit-scrollbar {
+                    display: none;
                 }
             </style>
         </head>
