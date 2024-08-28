@@ -163,7 +163,7 @@ class CowsayViewProvider {
   }
 
   _getRandomMessage() {
-    const excusesPath = path.join(this._extensionUri.fsPath, "excuses.txt");
+    const excusesPath = path.join(this._extensionUri.fsPath, "resources/excuses.txt");
     let excuses = [];
 
     try {

@@ -61,8 +61,8 @@
         "title": "Change Animal",
         "category": "Cowsay",
         "icon": {
-          "light": "resources/zoom-out-light.svg",
-          "dark": "resources/zoom-out-dark.svg"
+          "light": "resources/changeanimal-light.svg",
+          "dark": "resources/changeanimal-dark.svg"
         }
       }
     ],

@@ -6,9 +6,10 @@ Why? I don't know... for funsies! 🐮
 
 ## Features
 
-- Cowsay sidebar with random ~~cringey~~ messages
+- Cowsay sidebar with random programming excuse messages
 - Zoom in and out functionality
-- Refresh button for new cow-ntent
+- Refresh button for new cow-tent
+- New "animals" added to selection
 
 ![VS Code Cowsay in action](resources/cowsay-demo.gif)
 
@@ -24,6 +25,7 @@ Why? I don't know... for funsies! 🐮
 1. Open the VS Code Cowsay sidebar from the Explorer view
 2. Enjoy random cow messages!
 3. Use the toolbar buttons to:
+   - Change the animal
    - Refresh for a new message
    - Zoom in
    - Zoom out
@@ -36,6 +38,7 @@ This extension contributes the following commands:
 - `vscode-cowsay.refresh`: Refresh Cowsay
 - `vscode-cowsay.zoomIn`: Zoom In Cowsay
 - `vscode-cowsay.zoomOut`: Zoom Out Cowsay
+- `vscode-cowsay.changeAnimal`: Change "animal"
 
 ## Requirements
 
@@ -54,6 +57,7 @@ No known issues at this time. If you encounter any problems, please file an issu
 ### 0.3.0
 
 - Added more "animals" and ability to change them
+- Added developer excuses instead of cow puns
 - Improved design and code compatibility
 
 ### 0.2.0

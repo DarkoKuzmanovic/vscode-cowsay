@@ -3,6 +3,7 @@
 ## 0.3.0
 
 - Added more "animals" and ability to change them
+- Added developer excuses instead of cow puns
 - Improved design and code compatibility
 
 ## 0.2.0
