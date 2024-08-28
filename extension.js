@@ -1,111 +1,124 @@
-const vscode = require('vscode');
-const cowsay = require('cowsay');
+const vscode = require("vscode");
+const cowsay = require("cowsay");
+const fs = require("fs");
+const path = require("path");
 
 function activate(context) {
-    console.log('Activating VS Code Cowsay extension');
+  console.log("Activating VS Code Cowsay extension");
 
-    const provider = new CowsayViewProvider(context.extensionUri);
+  const provider = new CowsayViewProvider(context.extensionUri);
 
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(CowsayViewProvider.viewType, provider)
-    );
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      CowsayViewProvider.viewType,
+      provider
+    )
+  );
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('vscode-cowsay.refresh', () => {
-            provider.refresh();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('vscode-cowsay.zoomIn', () => {
-            provider.zoomIn();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('vscode-cowsay.zoomOut', () => {
-            provider.zoomOut();
-        })
-    );
-
-    context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-cowsay.changeAnimal', () => {
-        provider.showAnimalDropdown();
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-cowsay.refresh", () => {
+      provider.refresh();
     })
-);
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-cowsay.zoomIn", () => {
+      provider.zoomIn();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-cowsay.zoomOut", () => {
+      provider.zoomOut();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-cowsay.changeAnimal", () => {
+      provider.showAnimalDropdown();
+    })
+  );
 }
 
 class CowsayViewProvider {
+  static viewType = "cowsayView";
 
-    static viewType = 'cowsayView';
+  constructor(extensionUri) {
+    this._extensionUri = extensionUri;
+    this._zoomLevel = 0.8;
+    this._currentMessage = this._getRandomMessage();
+    this._currentAnimalIndex = 0;
+    this._animals = [
+      { value: "default", label: "Cow" },
+      { value: "small", label: "Small Cow" },
+      { value: "sheep", label: "Sheep" },
+      { value: "tux", label: "Tux (Penguin)" },
+      { value: "koala", label: "Koala" },
+      { value: "bunny", label: "Bunny" },
+    ];
+  }
 
-    constructor(extensionUri) {
-        this._extensionUri = extensionUri;
-        this._zoomLevel = 0.8;
-        this._currentMessage = this._getRandomMessage();
-        this._currentAnimalIndex = 0;
-        this._animals = ['sheep', 'tux', 'default', 'koala', 'bunny', 'small'];
-    }
+  resolveWebviewView(webviewView) {
+    this._view = webviewView;
 
-    resolveWebviewView(webviewView) {
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [this._extensionUri],
+    };
 
-        this._view = webviewView;
+    this._update();
+  }
 
-        webviewView.webview.options = {
-            enableScripts: true,
-            localResourceRoots: [this._extensionUri]
-        };
+  refresh() {
+    this._currentMessage = this._getRandomMessage();
+    this._update();
+  }
 
+  zoomIn() {
+    this._zoomLevel = Math.min(this._zoomLevel + 0.1, 2);
+    this._update();
+  }
+
+  zoomOut() {
+    this._zoomLevel = Math.max(this._zoomLevel - 0.1, 0.5);
+    this._update();
+  }
+
+  changeAnimal() {
+    this._currentAnimalIndex =
+      (this._currentAnimalIndex + 1) % this._animals.length;
+    this._update();
+  }
+
+  showAnimalDropdown() {
+    vscode.window.showQuickPick(this._animals).then((selectedAnimal) => {
+      if (selectedAnimal) {
+        this._currentAnimalIndex = this._animals.findIndex(
+          (animal) => animal.value === selectedAnimal.value
+        );
         this._update();
+      }
+    });
+  }
+
+  _update() {
+    if (this._view) {
+      const currentAnimal = this._animals[this._currentAnimalIndex].value;
+      const message = cowsay.say({
+        text: this._currentMessage,
+        f: currentAnimal,
+        e: "oO",
+        T: "U ",
+      });
+      this._view.webview.html = this._getHtmlForWebview(message);
     }
+  }
 
-    refresh() {
-        this._currentMessage = this._getRandomMessage();
-        this._update();
-    }
+  _getHtmlForWebview(message) {
+    var config = vscode.workspace.getConfiguration("editor");
+    var fontFamily = config.get("fontFamily");
 
-    zoomIn() {
-        this._zoomLevel = Math.min(this._zoomLevel + 0.1, 2);
-        this._update();
-    }
-
-    zoomOut() {
-        this._zoomLevel = Math.max(this._zoomLevel - 0.1, 0.5);
-        this._update();
-    }
-
-    changeAnimal() {
-        this._currentAnimalIndex = (this._currentAnimalIndex + 1) % this._animals.length;
-        this._update();
-    }
-
-    showAnimalDropdown() {
-        vscode.window.showQuickPick(this._animals).then(selectedAnimal => {
-            if (selectedAnimal) {
-                this._currentAnimalIndex = this._animals.indexOf(selectedAnimal);
-                this._update();
-            }
-        });
-    }
-
-    _update() {
-        if (this._view) {
-            const currentAnimal = this._animals[this._currentAnimalIndex];
-            const message = cowsay.say({
-                text: this._currentMessage,
-                f: currentAnimal,
-                e: "oO",
-                T: "U "
-            });
-            this._view.webview.html = this._getHtmlForWebview(message);
-        }
-    }
-
-    _getHtmlForWebview(message) {
-        var config = vscode.workspace.getConfiguration('editor');
-        var fontFamily = config.get('fontFamily');
-
-        return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -134,49 +147,76 @@ class CowsayViewProvider {
             <pre>${message}</pre>
         </body>
         </html>`;
+  }
+
+  _wrapLongMessage(message) {
+    if (message.length > 20) {
+      const midpoint = Math.ceil(message.length / 2);
+      const lastSpaceBeforeMidpoint = message.lastIndexOf(" ", midpoint);
+      const breakpoint =
+        lastSpaceBeforeMidpoint > 0 ? lastSpaceBeforeMidpoint : midpoint;
+      return (
+        message.slice(0, breakpoint) + "\n" + message.slice(breakpoint).trim()
+      );
+    }
+    return message;
+  }
+
+  _getRandomMessage() {
+    const excusesPath = path.join(this._extensionUri.fsPath, "excuses.txt");
+    let excuses = [];
+
+    try {
+      const data = fs.readFileSync(excusesPath, "utf8");
+      excuses = data.split("\n").filter((excuse) => excuse.trim() !== "");
+    } catch (err) {
+      console.error("Error reading excuses.txt:", err);
+      // Fallback to original messages if file read fails
+      return this._getDefaultMessage();
     }
 
-    _getRandomMessage() {
-        const messages = [
-            "Hello from VS Code!",
-            "Moo-ve over, I'm coding!",
-            "Have you herd? VS Code is awesome!",
-            "Holy cow, that's some good code!",
-            "Udder-ly fantastic extension, right?",
-            "No bull, VS Code is the best IDE around!",
-            "No beef with clean code!",
-            "Moo-ving on to the next line.",
-            "Don't have a cow, just keep coding!",
-            "This code is udderly perfect!",
-            "Moo-mentum is key when coding.",
-            "Time for a cow-ffee break!",
-            "Grazing through the code like a pro!",
-            "This code is off the moo-n!",
-            "Legendairy coder right here!",
-            "Bull-dozing through bugs like a champ!",
-            "You're really milking VS Code for all it's worth!",
-            "This code is a real cream of the crop!",
-            "Moo-difying some functions!",
-            "Cow-ding is so much fun!",
-            "Hay there, keep up the good work!",
-            "Moo-sic to my coding ears!",
-            "Hoofing through!"            
-        ];
-        let message = messages[Math.floor(Math.random() * messages.length)];
-    
-        if (message.length > 20) {
-            const midpoint = Math.ceil(message.length / 2);
-            const lastSpaceBeforeMidpoint = message.lastIndexOf(' ', midpoint);
-            const breakpoint = lastSpaceBeforeMidpoint > 0 ? lastSpaceBeforeMidpoint : midpoint;
-            message = message.slice(0, breakpoint) + '\n' + message.slice(breakpoint).trim();
-        }
-        return message;
+    if (excuses.length === 0) {
+      return this._getDefaultMessage();
     }
+
+    let message = excuses[Math.floor(Math.random() * excuses.length)];
+    return this._wrapLongMessage(message);
+  }
+
+  _getDefaultMessage() {
+    const messages = [
+      "Hello from VS Code!",
+      "Moo-ve over, I'm coding!",
+      "Have you herd? VS Code is awesome!",
+      "Holy cow, that's some good code!",
+      "Udder-ly fantastic extension, right?",
+      "No bull, VS Code is the best IDE around!",
+      "No beef with clean code!",
+      "Moo-ving on to the next line.",
+      "Don't have a cow, just keep coding!",
+      "This code is udderly perfect!",
+      "Moo-mentum is key when coding.",
+      "Time for a cow-ffee break!",
+      "Grazing through the code like a pro!",
+      "This code is off the moo-n!",
+      "Legendairy coder right here!",
+      "Bull-dozing through bugs like a champ!",
+      "You're really milking VS Code for all it's worth!",
+      "This code is a real cream of the crop!",
+      "Moo-difying some functions!",
+      "Cow-ding is so much fun!",
+      "Hay there, keep up the good work!",
+      "Moo-sic to my coding ears!",
+      "Hoofing through!",
+    ];
+    let message = messages[Math.floor(Math.random() * messages.length)];
+    return this._wrapLongMessage(message);
+  }
 }
 
 function deactivate() {}
 
 module.exports = {
-    activate,
-    deactivate
+  activate,
+  deactivate,
 };
