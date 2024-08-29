@@ -3,7 +3,7 @@
   "displayName": "VS Code Cowsay",
   "description": "A fun Cowsay sidebar for VS Code with zoom functionality",
   "icon": "resources/icon.png",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "quzma",
   "engines": {
     "vscode": "^1.92.0"
@@ -18,6 +18,16 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
+    "configuration": {
+      "title": "VS Code Cowsay",
+      "properties": {
+        "vscode-cowsay.autoRefreshInterval": {
+          "type": "number",
+          "default": 5,
+          "description": "Auto-refresh interval in minutes (0 to disable)"
+        }
+      }
+    },
     "views": {
       "explorer": [
         {

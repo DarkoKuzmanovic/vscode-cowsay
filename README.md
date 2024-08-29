@@ -4,12 +4,17 @@ If you have a lot of screen real estate, like wasting it, and especially if you'
 
 Why? I don't know... for funsies! 🐮
 
+## Credits
+
+This extension uses the [cowsay](https://github.com/piuccio/cowsay) library by piuccio for generating the ASCII art cows and messages.
+
 ## Features
 
 - Cowsay sidebar with random programming excuse messages
 - Zoom in and out functionality
 - Refresh button for new cow-tent
-- New "animals" added to selection
+- Multiple animals in selection
+- Ability to set an interval for message refresh
 
 ![VS Code Cowsay in action](resources/cowsay-demo.gif)
 
@@ -46,13 +51,21 @@ VS Code 1.92.0 or higher (No idea if it works on lower versions but if you're no
 
 ## Extension Settings
 
-This extension doesn't add any VS Code settings, but if, for any reason you want to add a keyboard shortcut for refresh, you can do it with Manage > Keyboard shortcuts and search for `vscode-cowsay.refresh` and assign a shortcut to it.
+The extension contributes the following settings:
+
+- `vscode-cowsay.autoRefreshInterval`: Set the interval (in minutes) for automatically refreshing the Cowsay message. Default is 0 (disabled).
+
+You can also add a keyboard shortcut for refresh by going to Manage > Keyboard shortcuts, searching for `vscode-cowsay.refresh`, and assigning a shortcut to it.
 
 ## Known Issues
 
 No known issues at this time. If you encounter any problems, please file an issue on the GitHub repository.
 
 ## Release Notes
+
+### 0.4.0
+
+- Added auto-refresh interval option in User Settings (press Ctrl+, then search for cowsay and look for "Auto Refresh Interval setting under Vscode-cowsay" section and enter the desired interval in minutes)
 
 ### 0.3.0
 

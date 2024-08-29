@@ -7,6 +7,7 @@ function activate(context) {
   console.log("Activating VS Code Cowsay extension");
 
   const provider = new CowsayViewProvider(context.extensionUri);
+  context.subscriptions.push(provider);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -55,6 +56,7 @@ class CowsayViewProvider {
       { value: "tux", label: "Tux (Penguin)" },
       { value: "koala", label: "Koala" },
       { value: "bunny", label: "Bunny" },
+      { value: "owl", label: "Owl" },
     ];
   }
 
@@ -67,6 +69,11 @@ class CowsayViewProvider {
     };
 
     this._update();
+    this.startAutoRefresh();
+  }
+
+  dispose() {
+    this.stopAutoRefresh();
   }
 
   refresh() {
@@ -101,16 +108,38 @@ class CowsayViewProvider {
     });
   }
 
+  startAutoRefresh() {
+    const config = vscode.workspace.getConfiguration('vscode-cowsay');
+    const intervalMinutes = config.get('autoRefreshInterval', 5);
+    
+    if (intervalMinutes > 0) {
+      this._autoRefreshInterval = setInterval(() => {
+        this.refresh();
+      }, intervalMinutes * 60 * 1000);
+    }
+  }
+
+  stopAutoRefresh() {
+    if (this._autoRefreshInterval) {
+      clearInterval(this._autoRefreshInterval);
+    }
+  }
+
   _update() {
     if (this._view) {
       const currentAnimal = this._animals[this._currentAnimalIndex].value;
+      const path = require('path');
+
+      const cowFile = currentAnimal === "owl" 
+        ? path.join(this._extensionUri.fsPath, 'resources', 'owl.cow')
+        : currentAnimal;
+
       const message = cowsay.say({
         text: this._currentMessage,
-        f: currentAnimal,
+        f: cowFile,
         e: "oO",
         T: "U ",
-      });
-      this._view.webview.html = this._getHtmlForWebview(message);
+      });      this._view.webview.html = this._getHtmlForWebview(message);
     }
   }
 
@@ -213,7 +242,6 @@ class CowsayViewProvider {
     return this._wrapLongMessage(message);
   }
 }
-
 function deactivate() {}
 
 module.exports = {

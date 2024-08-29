@@ -121,3 +121,11 @@ You must have done something wrong
 You must have the wrong version
 You're doing it wrong
 Your browser must be caching the old content
+I must have forgotten to push that commit.
+The system logs are not showing any errors.
+I didn't receive any feedback on that, so I assumed it was okay.
+It works on my machine, but maybe the server environment is different.
+The bug tracker didn’t assign that to me.
+I merged the code, but it looks like something went wrong in the pipeline.
+I didn’t have the right permissions to test that feature.
+That functionality was never specified in the requirements.
