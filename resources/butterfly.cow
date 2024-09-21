@@ -1,0 +1,13 @@
+##
+## Butterfly
+##
+$the_cow = <<EOC;
+  $thoughts
+   $thoughts  __ \\/ __
+     /o \\{}/ o\\
+     \\   ()   /
+      `> /\\ <`
+      (o/\\/\\o)
+       )    (
+EOC
+

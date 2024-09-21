@@ -1,0 +1,14 @@
+##
+## Llama
+##
+$the_cow = <<EOC;
+  $thoughts
+   $thoughts  (\\/)
+     (_o |
+      /  |
+      \\  \\______
+       \\        )o
+        /|----- |
+        \\|     /|
+EOC
+

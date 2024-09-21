@@ -6,7 +6,8 @@ const path = require("path");
 function activate(context) {
   console.log("Activating VS Code Cowsay extension");
 
-  const provider = new CowsayViewProvider(context.extensionUri);
+  // Pass the entire context to the provider
+  const provider = new CowsayViewProvider(context.extensionUri, context);
   context.subscriptions.push(provider);
 
   context.subscriptions.push(
@@ -44,11 +45,15 @@ function activate(context) {
 class CowsayViewProvider {
   static viewType = "cowsayView";
 
-  constructor(extensionUri) {
+  constructor(extensionUri, context) {
     this._extensionUri = extensionUri;
-    this._zoomLevel = 0.8;
+    this._context = context; // Store the context for globalState access
+
+    // Retrieve the saved zoom level or set to default (0.8)
+    this._zoomLevel = this._context.globalState.get('cowsayZoomLevel', 0.8);
+
     this._currentMessage = this._getRandomMessage();
-    this._currentAnimalIndex = 0;
+    this._currentAnimalIndex = vscode.workspace.getConfiguration('vscode-cowsay').get('selectedAnimalIndex', 0);
     this._animals = [
       { value: "default", label: "Cow" },
       { value: "small", label: "Small Cow" },
@@ -57,6 +62,12 @@ class CowsayViewProvider {
       { value: "koala", label: "Koala" },
       { value: "bunny", label: "Bunny" },
       { value: "owl", label: "Owl" },
+      { value: "bat", label: "Bat" },
+      { value: "bear", label: "Bear" },
+      { value: "butterfly", label: "Butterfly" },
+      { value: "cat", label: "Cat" },
+      { value: "dog", label: "Dog" },
+      { value: "llama", label: "Llama" }
     ];
   }
 
@@ -83,11 +94,13 @@ class CowsayViewProvider {
 
   zoomIn() {
     this._zoomLevel = Math.min(this._zoomLevel + 0.1, 2);
+    this._context.globalState.update('cowsayZoomLevel', this._zoomLevel); // Save the new zoom level
     this._update();
   }
 
   zoomOut() {
     this._zoomLevel = Math.max(this._zoomLevel - 0.1, 0.5);
+    this._context.globalState.update('cowsayZoomLevel', this._zoomLevel); // Save the new zoom level
     this._update();
   }
 
@@ -103,6 +116,7 @@ class CowsayViewProvider {
         this._currentAnimalIndex = this._animals.findIndex(
           (animal) => animal.value === selectedAnimal.value
         );
+        vscode.workspace.getConfiguration('vscode-cowsay').update('selectedAnimalIndex', this._currentAnimalIndex, true);
         this._update();
       }
     });
@@ -128,24 +142,28 @@ class CowsayViewProvider {
   _update() {
     if (this._view) {
       const currentAnimal = this._animals[this._currentAnimalIndex].value;
-      const path = require('path');
+      let cowFile;
 
-      const cowFile = currentAnimal === "owl" 
-        ? path.join(this._extensionUri.fsPath, 'resources', 'owl.cow')
-        : currentAnimal;
+      if (currentAnimal === "owl" || currentAnimal === "dog" || currentAnimal === "bat" || currentAnimal === "bear" || currentAnimal === "llama" || currentAnimal === "butterfly" || currentAnimal === "cat") {
+        cowFile = path.join(this._extensionUri.fsPath, 'resources', `${currentAnimal}.cow`);
+      } else {
+        cowFile = currentAnimal;
+      }
 
       const message = cowsay.say({
         text: this._currentMessage,
         f: cowFile,
         e: "oO",
         T: "U ",
-      });      this._view.webview.html = this._getHtmlForWebview(message);
+      });
+
+      this._view.webview.html = this._getHtmlForWebview(message);
     }
   }
 
   _getHtmlForWebview(message) {
-    var config = vscode.workspace.getConfiguration("editor");
-    var fontFamily = config.get("fontFamily");
+    const config = vscode.workspace.getConfiguration("editor");
+    const fontFamily = config.get("fontFamily");
 
     return `<!DOCTYPE html>
         <html lang="en">
@@ -242,6 +260,7 @@ class CowsayViewProvider {
     return this._wrapLongMessage(message);
   }
 }
+
 function deactivate() {}
 
 module.exports = {
