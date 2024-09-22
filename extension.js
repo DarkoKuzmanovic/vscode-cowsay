@@ -197,16 +197,37 @@ class CowsayViewProvider {
   }
 
   _wrapLongMessage(message) {
-    if (message.length > 20) {
-      const midpoint = Math.ceil(message.length / 2);
-      const lastSpaceBeforeMidpoint = message.lastIndexOf(" ", midpoint);
-      const breakpoint =
-        lastSpaceBeforeMidpoint > 0 ? lastSpaceBeforeMidpoint : midpoint;
-      return (
-        message.slice(0, breakpoint) + "\n" + message.slice(breakpoint).trim()
-      );
+    const maxLineLength = 30;
+    const words = message.split(' ');
+    const lines = [];
+    let currentLine = '';
+  
+    for (const word of words) {
+      // Check if adding the next word exceeds the maximum length
+      if ((currentLine + ' ' + word).trim().length > maxLineLength) {
+        if (currentLine.length > 0) {
+          lines.push(currentLine.trim());
+        }
+  
+        // If the word itself is longer than maxLineLength, split the word
+        if (word.length > maxLineLength) {
+          const splitWords = word.match(new RegExp(`.{1,${maxLineLength}}`, 'g'));
+          lines.push(...splitWords);
+          currentLine = '';
+        } else {
+          currentLine = word;
+        }
+      } else {
+        currentLine += ' ' + word;
+      }
     }
-    return message;
+  
+    // Add any remaining words to the lines
+    if (currentLine.length > 0) {
+      lines.push(currentLine.trim());
+    }
+  
+    return lines.join('\n');
   }
 
   _getRandomMessage() {

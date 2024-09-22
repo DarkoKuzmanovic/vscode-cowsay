@@ -63,6 +63,15 @@ No known issues at this time. If you encounter any problems, please file an issu
 
 ## Release Notes
 
+### 0.7.0
+
+- Added multi-line message wrapping to improve readability for longer texts.
+
+### 0.6.0
+
+- Extension now keeps zoom level after restart.
+- 6 new animals added - bat, bear, butterfly, cat, dog, llama.
+
 ### 0.5.0
 
 - Extension now keeps the animal you selected after restart.

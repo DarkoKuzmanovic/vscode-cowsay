@@ -3,7 +3,7 @@
   "displayName": "VS Code Cowsay",
   "description": "A fun Cowsay sidebar for VS Code with zoom functionality",
   "icon": "resources/icon.png",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "quzma",
   "engines": {
     "vscode": "^1.92.0"
